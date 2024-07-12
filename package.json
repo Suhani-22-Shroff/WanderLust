@@ -22,7 +22,8 @@
 		"express-session": "^1.18.0",
 		"leaflet": "^1.7.1",
 		"method-override": "^3.0.0",
-		"mongoose": "^5.10.9"
+		"mongoose": "^5.10.9",
+		"passport": "^0.7.0"
 	},
 	"devDependencies": {
 		"nodemon": "^2.0.4"
