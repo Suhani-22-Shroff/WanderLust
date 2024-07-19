@@ -31,7 +31,10 @@ main()
 	});
 
 async function main() {
-	await mongoose.connect(dbUrl);
+	await mongoose.connect(dbUrl, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	});
 }
 
 app.set("view engine", "ejs");
@@ -46,11 +49,11 @@ const store = MongoStore.create({
 	crypto: {
 		secret: process.env.SECRET,
 	},
-	touchAfter: 24 * 3600,
+	touchAfter: 24 * 3600, // This sets the time interval in seconds for session updates in the store.
 });
 
-store.on("error", () => {
-	console.log("ERROE IN MONGO SESSION STORE", err);
+store.on("error", (err) => {
+	console.log("ERROR IN MONGO SESSION STORE", err);
 });
 
 const sessionOptions = {
@@ -64,10 +67,6 @@ const sessionOptions = {
 		httpOnly: true,
 	},
 };
-
-// app.get("/", (req, res) => {
-// 	res.send("Hi, I am root");
-// });
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -86,16 +85,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-// app.get("/demouser", async (req, res) => {
-// 	let fakeUser = new User({
-// 		email: "student@gmail.com",
-// 		username: "delta-student",
-// 	});
-
-// 	let registeredUser = await User.register(fakeUser, "helloworld");
-// 	res.send(registeredUser);
-// });
-
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
@@ -107,7 +96,6 @@ app.all("*", (req, res, next) => {
 app.use((err, req, res, next) => {
 	let { statusCode = 500, message = "Something went wrong!" } = err;
 	res.status(statusCode).render("error.ejs", { message });
-	// res.status(statusCode).send(message);
 });
 
 app.listen(8080, () => {
